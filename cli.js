@@ -58,6 +58,12 @@ async function main() {
     ]);
 
     console.log('✅ Droplert files installed successfully!');
+    console.log("Please configure the following env variables:\n");
+
+    console.log(`DROPLERT_KEY: Go to https://droplert.vercel.app/ to get your key`);
+    console.log(`NEXT_PUBLIC_DROPLERT_ID: Go to https://droplert.vercel.app/ to get your ID`);
+    console.log(`NEXT_PUBLIC_WS_SERVER_URL: https://alertsockets.onrender.com/`);
+    
   } catch (error) {
     console.error('❌ Error during installation:', error);
     process.exit(1);
