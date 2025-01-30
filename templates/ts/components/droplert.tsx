@@ -12,6 +12,7 @@ type Notification = {
   backgroundColor: string;
   textColor: string;
   borderColor: string;
+  logoFileName?:string;
 };
 
 const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WS_SERVER_URL || '';
@@ -58,6 +59,8 @@ const Droplert: React.FC = () => {
               backgroundColor: data.data.backgroundColor,
               textColor: data.data.textColor,
               borderColor: data.data.borderColor,
+              logoFileName:data.data.fileName
+              
             });
           }
         } catch (error) {
@@ -89,17 +92,23 @@ const Droplert: React.FC = () => {
 
   if (!currentNotification) return null;
 
+
   return (
     <div>
-      {currentNotification.type === 'alert' && (
-        <MyAlert
-          title={currentNotification.title}
-          description={currentNotification.message}
-          backgroundColor={currentNotification.backgroundColor}
-          textColor={currentNotification.textColor}
-          borderColor={currentNotification.borderColor}
-          onClose={handleClose}
-        />
+      {currentNotification.type==='alert' && (
+                 <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
+                 <MyAlert
+                   preview={true}
+                   title={currentNotification.title}
+                   description={currentNotification.message}
+                   backgroundColor={currentNotification.backgroundColor}
+                   borderColor={currentNotification.borderColor}
+                   textColor={currentNotification.textColor}
+                   onClose={handleClose}
+                   className="border-ocean-500 border shadow-lg animate-float"
+                   logoFileName={currentNotification.logoFileName}
+                 />
+               </div>
       )}
       {currentNotification.type === 'alert_dialog' && (
         <MyAlertDialog
@@ -110,6 +119,7 @@ const Droplert: React.FC = () => {
           textColor={currentNotification.textColor}
           borderColor={currentNotification.borderColor}
           onClose={handleClose}
+          logoFileName={currentNotification.logoFileName}
         />
       )}
       {currentNotification.type === 'toast' && (
@@ -122,6 +132,7 @@ const Droplert: React.FC = () => {
           textColor={currentNotification.textColor}
           borderColor={currentNotification.borderColor}
           onClose={handleClose}
+          logoFileName={currentNotification.logoFileName}
         />
       )}
     </div>
