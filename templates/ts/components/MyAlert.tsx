@@ -17,6 +17,7 @@ interface AlertCustomProps {
   borderColor: string;
   preview: boolean;
   logoFileName?: string;
+  borderRadius:number;
 }
 
 export type AlertProps = BaseProps & AlertCustomProps;
@@ -33,10 +34,13 @@ const MyAlert = React.forwardRef<HTMLDivElement, AlertProps>(
       onClose,
       backgroundColor,
       logoFileName,
+      borderRadius,
       ...props
     },
     ref
   ) => {
+
+    console.log(logoFileName)
     const [isVisible, setIsVisible] = React.useState(true);
 
     React.useEffect(() => {
@@ -51,12 +55,13 @@ const MyAlert = React.forwardRef<HTMLDivElement, AlertProps>(
     }, [onClose, preview]);
 
     const renderLogo = () => {
+      const logoPath ='/'+logoFileName || null;
 
-      if (logoFileName) {
+      if (logoPath) {
         return (
           <div className="absolute inset-0 w-full h-full">
             <Image
-              src={`/${logoFileName}`}
+              src={logoPath}
               alt="Logo"
               layout="fill"
               objectFit="cover"
@@ -87,14 +92,15 @@ const MyAlert = React.forwardRef<HTMLDivElement, AlertProps>(
             style={{
               background: backgroundColor,
               borderColor: borderColor,
+              borderWidth:`${borderRadius}px`
             }}
             {...(props)}
           >
             {renderLogo()}
             <div className="flex-1 relative z-10">
-              <div className="flex items-center justify-start mb-3">
+              <div className="flex justify-center items-center mb-3">
                 <Bell style={{ color: textColor }} className="mr-2" />
-                <h5 className="font-medium leading-none tracking-tight" style={{ color: textColor }}>
+                <h5 className="font-medium leading-none tracking-tight " style={{ color: textColor }}>
                   {title}
                 </h5>
               </div>
@@ -110,7 +116,7 @@ const MyAlert = React.forwardRef<HTMLDivElement, AlertProps>(
                   setIsVisible(false);
                   onClose();
                 }}
-                className="ml-4 inline-flex h-6 w-6 items-center justify-center rounded-full opacity-50"
+                className="ml-4 inline-flex h-6 w-6 items-center justify-center rounded-full opacity-50 ring-offset-background"
               >
                 <X className="h-4 w-4" />
               </button>

@@ -3,13 +3,48 @@ const inquirer = require('inquirer');
 const fs = require('fs-extra');
 const path = require('path');
 
+async function injectImages(sourceDir, publicDir) {
+  const imageFiles = [
+    'Abstract1.png',
+    'Abstract2.png',
+    'Caution.png',
+    'GoalMet.png',
+    
+  ];
+
+  try {
+    // Ensure the public directory exists
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
+
+    // Copy each image file
+    for (const imageFile of imageFiles) {
+      const sourcePath = path.join(sourceDir, 'images', imageFile);
+      const targetPath = path.join(publicDir, imageFile);
+
+      // Check if image exists in source
+      if (!fs.existsSync(sourcePath)) {
+        console.log(`❌ Image file ${imageFile} not found in source directory.`);
+        continue;
+      }
+
+      // Copy image to public directory
+      await fs.copy(sourcePath, targetPath);
+      console.log(`✅ ${imageFile} injected successfully.`);
+    }
+  } catch (error) {
+    console.error('❌ Error during image injection:', error);
+  }
+}
+
 async function main() {
   try {
     const { projectType } = await inquirer.prompt([{
       type: 'list',
       name: 'projectType',
       message: 'What type of project are you using?',
-      choices: ['JavaScript', 'TypeScript']
+      choices: ['TypeScript']
     }]);
 
     const sourceDir = projectType === 'JavaScript' ? 
@@ -20,9 +55,11 @@ async function main() {
       api: path.join(process.cwd(), 'app/api/droplert'),
       components: path.join(process.cwd(), 'components/droplert'),
       lib: path.join(process.cwd(), 'lib'),
-      utils: path.join(process.cwd(), 'lib/utils.ts')
+      utils: path.join(process.cwd(), 'lib/utils.ts'),
+      public: path.join(process.cwd(), 'public')
     };
 
+    // Existing directory and file creation logic...
     if (!fs.existsSync(targetPaths.components)) {
       console.log('Creating /components directory...');
       fs.mkdirSync(targetPaths.components, { recursive: true });
@@ -57,12 +94,14 @@ async function main() {
       fs.copy(path.join(sourceDir, 'components'), targetPaths.components)
     ]);
 
+    // Add image injection
+    await injectImages(sourceDir, targetPaths.public);
+
     console.log('✅ Droplert files installed successfully!');
     console.log("Please configure the following env variables:\n");
 
-    console.log(`DROPLERT_KEY: Go to https://droplert.vercel.app/ to get your key`);
-    console.log(`NEXT_PUBLIC_DROPLERT_ID: Go to https://droplert.vercel.app/ to get your ID`);
-    console.log(`NEXT_PUBLIC_WS_SERVER_URL: https://alertsockets.onrender.com/`);
+    console.log(`DROPLERT_KEY: Go to https://droplert.abstergo.dev/ to get your key`);
+    console.log(`NEXT_PUBLIC_DROPLERT_ID: Go to https://droplert.abstergo.dev/ to get your ID`);
     
   } catch (error) {
     console.error('❌ Error during installation:', error);
